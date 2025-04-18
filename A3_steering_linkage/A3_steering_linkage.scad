@@ -10,7 +10,7 @@ short_arm_hole_offet_mm=14;
 center_total_diameter_mm=10;
 ends_total_diameter_mm=6;
 ends_total_height_mm=12;
-ends_total_thread_height_mm=6;
+ends_total_thread_height_mm=15;
 
 main_body_height_mm=5.7;
 
@@ -19,6 +19,7 @@ main_pivet_hole_diameter_mm=6;
 //bearing_diameter_mm=4.6;
 bearing_diameter_mm=8.1;
 bearing_depth_mm=1.7;
+nuggin_thread_z_start=0;
 
 difference() {
     union() {
@@ -42,9 +43,13 @@ difference() {
     cylinder(d=bearing_diameter_mm, h=bearing_depth_mm);
     // Top bearing pocket (8mm diameter, 1.85mm deep)
     translate([0,0,main_body_height_mm-bearing_depth_mm]) cylinder(d=bearing_diameter_mm, h=bearing_depth_mm);
+    
+    union() {
+        translate([long_arm_hole_offset_mm,0,0]) cylinder(d=ends_total_diameter_mm, h=ends_total_height_mm, center=true);
+        translate([-short_arm_hole_offet_mm,0,0]) cylinder(d=ends_total_diameter_mm, h=ends_total_height_mm, center=true);
+    }
 }
 
-nuggin_thread_z_start=-(ends_total_height_mm/2);
 
 difference() {
     union() {
