@@ -4,19 +4,30 @@ $fn=100; // Set resolution for smooth cylinders
 // Dimensions: 4.8mm main hole, 8mm bearing cutouts, 2.5mm tie rod holes
 // Arms: 18mm and 14mm lengths, 5.7mm thickness
 
+long_arm_hole_offset_mm=18;
+short_arm_hole_offet_mm=14;
+
 center_total_diameter_mm=10;
 ends_total_diameter_mm=6;
 ends_total_height_mm=12;
 ends_total_thread_height_mm=6;
 
+main_body_height_mm=5.7;
+
 difference() {
     union() {
         // Central section
-        cylinder(d=center_total_diameter_mm, h=5.7);
-        // Arm to x=18mm
-        translate([0,-2.5,0]) cube([18,5,5.7]);
-        // Arm to x=-14mm
-        translate([-14,-2.5,0]) cube([14,5,5.7]);
+        cylinder(d=center_total_diameter_mm, h=main_body_height_mm);
+        // Tapered arm to x=18mm
+        hull() {
+            translate([0,-5,0]) cube([0.1,10,main_body_height_mm]);    // Wide base at central cylinder edge
+            translate([long_arm_hole_offset_mm,-ends_total_diameter_mm/2,0]) cube([0.1,5,main_body_height_mm]);  // Original width at end
+        }
+        // Tapered arm to x=-14mm
+        hull() {
+            translate([0,-5,0]) cube([0.1,10,main_body_height_mm]);   // Wide base at central cylinder edge
+            translate([-short_arm_hole_offet_mm,-ends_total_diameter_mm/2,0]) cube([0.1,ends_total_diameter_mm,main_body_height_mm]); // Original width at end
+        }
     }
     // Main pivot hole (4.8mm diameter)
     cylinder(d=4.8, h=6, center=true);
@@ -30,14 +41,11 @@ nuggin_thread_z_start=-(ends_total_height_mm/2);
 
 difference() {
     union() {
-        translate([18,0,0]) cylinder(d=ends_total_diameter_mm, h=ends_total_height_mm, center=true);
-        translate([-14,0,0]) cylinder(d=ends_total_diameter_mm, h=ends_total_height_mm, center=true);
+        translate([long_arm_hole_offset_mm,0,0]) cylinder(d=ends_total_diameter_mm, h=ends_total_height_mm, center=true);
+        translate([-short_arm_hole_offet_mm,0,0]) cylinder(d=ends_total_diameter_mm, h=ends_total_height_mm, center=true);
     }
     // Tie rod hole at x=18mm (2.5mm diameter)
-    translate([18,0,nuggin_thread_z_start]) cylinder(d=2.5, h=ends_total_thread_height_mm, center=true);
+    translate([long_arm_hole_offset_mm,0,nuggin_thread_z_start]) cylinder(d=2.5, h=ends_total_thread_height_mm, center=true);
     // Tie rod hole at x=-14mm (2.5mm diameter)
-    translate([-14,0,nuggin_thread_z_start]) cylinder(d=2.5, h=ends_total_thread_height_mm, center=true);
-};
-
-
-// translate([-14,0,0]) cylinder(d=2.5, h=6, center=true);
+    translate([-short_arm_hole_offet_mm,0,nuggin_thread_z_start]) cylinder(d=2.5, h=ends_total_thread_height_mm, center=true);
+}
