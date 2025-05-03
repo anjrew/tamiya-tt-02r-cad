@@ -55,15 +55,15 @@ wing_height = 50;  // Max height of the wing at the front (Z-axis)
 back_width = 20;   // Width of the wing at the mounting face (Y-axis)
 front_taper_width = 10; // Width of the wing at the very front, top edge (Y-axis) - Adjust taper here
 wing_start_z_mm = wing_height/2 - base_thickness/2;
+wing_bottom_thickness_mm=5;
 
-
-module triangle_2d() {
+module triangle_2d(base, height) {
   // Define the points of the 2D triangle in the XY plane
   // Starting at origin [0,0]
   points = [
     [0, 0],                 // Point 1: Origin
-    [back_width, 0],     // Point 2: Along the X axis
-    [0, wing_height]    // Point 3: Along the Y axis (creates a right-angled triangle)
+    [base, 0],     // Point 2: Along the X axis
+    [0, height]    // Point 3: Along the Y axis (creates a right-angled triangle)
     // For an isosceles triangle centered on Y axis:
     // [triangle_base / 2, triangle_height]
   ];
@@ -78,11 +78,18 @@ module wing() {
     translate([0,base_width,wing_start_z_mm])
         cube([wing_length,back_width,wing_height],center = true);
     
-    // Remove back part
+    // Remove front part
     translate([0,base_width/2, base_thickness/2 + wing_height])
         rotate([90, 180, 270])
         linear_extrude(height = wing_length, center = true) {
-         triangle_2d();
+         triangle_2d(base = back_width, height = wing_height);
+    }
+    
+    // Remove back part
+    translate([0,base_width/2 + back_width, -base_thickness/2 ])
+        rotate([90, 0, 270])
+        linear_extrude(height = wing_length, center = true) {
+         triangle_2d(base = back_width-wing_bottom_thickness_mm, height = wing_height);
     }
    }
 }
