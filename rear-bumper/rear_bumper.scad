@@ -49,40 +49,57 @@ module inner_hole() {
   cylinder(d = inner_hole_diameter, h = base_thickness + 1, center = true);
 }
 
+// Wing Dimensions
+wing_length = 200; // Total length of the wing (X-axis)
+wing_height = 50;  // Max height of the wing at the front (Z-axis)
+back_width = 20;   // Width of the wing at the mounting face (Y-axis)
+front_taper_width = 10; // Width of the wing at the very front, top edge (Y-axis) - Adjust taper here
+
+module wing() {
+    translate([0,base_width,base_thickness])
+        cube([wing_length,back_width,wing_height],center = true);
+
+}
+
 // --- Main Assembly ---
 
-difference() {
-  // 1. Start with the base
-  base();
+union()
+{
+    wing();
 
-  // 2. Subtract the main holes
-  // Outer holes
-  translate([outer_hole1_x, outer_hole_offset_y, 0]) outer_hole();
-  translate([outer_hole2_x, outer_hole_offset_y, 0]) outer_hole();
+    difference() {
+      // 1. Start with the base
+      base();
 
-  // Inner holes
-  translate([inner_hole1_x, inner_hole_y_pos, 0]) inner_hole();
-  translate([inner_hole2_x, inner_hole_y_pos, 0]) inner_hole();
+      // 2. Subtract the main holes
+      // Outer holes
+      translate([outer_hole1_x, outer_hole_offset_y, 0]) outer_hole();
+      translate([outer_hole2_x, outer_hole_offset_y, 0]) outer_hole();
 
-  // 3. Subtract the smooth connecting channels using hull()
+      // Inner holes
+      translate([inner_hole1_x, inner_hole_y_pos, 0]) inner_hole();
+      translate([inner_hole2_x, inner_hole_y_pos, 0]) inner_hole();
 
-  // Channel 1 (Left side: connects outer_hole1 and inner_hole1)
-  hull() {
-    // Cylinder at outer hole 1 center
-    translate([outer_hole1_x, outer_hole_offset_y, 0])
-      cylinder(d = channel_diameter, h = channel_height, center = true);
-    // Cylinder at inner hole 1 center
-    translate([inner_hole1_x, inner_hole_y_pos, 0])
-      cylinder(d = channel_diameter, h = channel_height, center = true);
-  }
+      // 3. Subtract the smooth connecting channels using hull()
 
-  // Channel 2 (Right side: connects outer_hole2 and inner_hole2)
-  hull() {
-    // Cylinder at outer hole 2 center
-    translate([outer_hole2_x, outer_hole_offset_y, 0])
-      cylinder(d = channel_diameter, h = channel_height, center = true);
-    // Cylinder at inner hole 2 center
-    translate([inner_hole2_x, inner_hole_y_pos, 0])
-      cylinder(d = channel_diameter, h = channel_height, center = true);
-  }
+      // Channel 1 (Left side: connects outer_hole1 and inner_hole1)
+      hull() {
+        // Cylinder at outer hole 1 center
+        translate([outer_hole1_x, outer_hole_offset_y, 0])
+          cylinder(d = channel_diameter, h = channel_height, center = true);
+        // Cylinder at inner hole 1 center
+        translate([inner_hole1_x, inner_hole_y_pos, 0])
+          cylinder(d = channel_diameter, h = channel_height, center = true);
+      }
+
+      // Channel 2 (Right side: connects outer_hole2 and inner_hole2)
+      hull() {
+        // Cylinder at outer hole 2 center
+        translate([outer_hole2_x, outer_hole_offset_y, 0])
+          cylinder(d = channel_diameter, h = channel_height, center = true);
+        // Cylinder at inner hole 2 center
+        translate([inner_hole2_x, inner_hole_y_pos, 0])
+          cylinder(d = channel_diameter, h = channel_height, center = true);
+      }
+    }
 }
