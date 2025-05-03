@@ -54,9 +54,9 @@ wing_length = 200; // Total length of the wing (X-axis)
 wing_height = 50;  // Max height of the wing at the front (Z-axis)
 back_width = 20;   // Width of the wing at the mounting face (Y-axis)
 front_taper_width = 10; // Width of the wing at the very front, top edge (Y-axis) - Adjust taper here
-
+wing_start_z_mm = wing_height/2 - base_thickness/2;
 module wing() {
-    translate([0,base_width,base_thickness])
+    translate([0,base_width,wing_start_z_mm])
         cube([wing_length,back_width,wing_height],center = true);
 
 }
