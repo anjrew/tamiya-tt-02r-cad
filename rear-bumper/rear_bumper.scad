@@ -61,7 +61,7 @@ module triangle_2d(base, height) {
   // Define the points of the 2D triangle in the XY plane
   // Starting at origin [0,0]
   points = [
-    [0, 0],                 // Point 1: Origin
+    [0, 0],        // Point 1: Origin
     [base, 0],     // Point 2: Along the X axis
     [0, height]    // Point 3: Along the Y axis (creates a right-angled triangle)
     // For an isosceles triangle centered on Y axis:
